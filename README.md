@@ -7,3 +7,5 @@ scripts to keep me sitting in my chair
 #restart this pc remotely restarts the PC on the network
 
 #remote log off logs off a user
+
+#ftpftw downloads files from an ftp location (otdr fibre device)
