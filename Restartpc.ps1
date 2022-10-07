@@ -45,13 +45,15 @@ function chkuptime # checks if uptime is greater or less than 0 min
 Get-WMIObject -ClassName Win32_ComputerSystem -ComputerName "$pcname" -Credential $Credential | Select-Object Username  # tells you whos logged in #  - \\itsyshorse\workshop\Signed\userlookup.ps1?
 uptime | format-list Days,Hours,Minutes #current up time
 $Ans = Read-Host -Prompt "do you want to restart $PCname y/n" #restart y/n
-    If ($Ans -eq 'Y') 
+    If ($Ans -eq 'y') 
         {
         clear-host
         write-host "attempting to restart"
         restart-computer -Computername $PCname -Credential $Credential -Force
         uptime | format-list Days,Hours,Minutes
         }
+    if ($Ans -ne 'y' )
+        {Exit}
 
 try 
     {
@@ -60,7 +62,7 @@ try
 catch 
     {
     clear-host
-    write-host "restarting"
+    write-host "currently restarting :)"
     }
 finally 
     {
