@@ -6,40 +6,42 @@ restarts a pc, tells you the uptime and logged in person
 ### improvements
 use the username lookup script to find the name from the clock card
 
-i want it to have a count function for when it's restarting, this is a maybe code?
-function counter
-{
-    $counter = 0
-    for ($counter -lt 20)
+i want it to have a count function for when it's restarting, this is a maybe code? - i want it to be interrupted if the PC comes back
+
+maybe a 'do until' loop
+    function countup
     {
-        Start-sleep 0
-        $Counter++
-        write-host $Counter
-        if ($Counter -eq 10)
+        $counter = 0
+        for ($counter -lt 20)
         {
-            Start-sleep 5
-        }
-        If ($Counter -eq 20)
-        {
-            write-host "it's taking a while, maybe it's broken :("
+            Start-sleep 1
+            $Counter++
+            write-host $Counter
+            if ($Counter -eq 10)
+            {
+                write-host "hmm... it's taking a while, maybe windows update?"
+                Start-sleep 5
+            }
+            If ($Counter -eq 20)
+            {
+                write-host "it's taking a while, maybe it's broken :("
+            }
         }
     }
-}
+
 
 ### problems
 sometimes doesn't actually come up with the username? no idea why but the script still works on standard domain joined pc's
 
 #>
-
-
 function testpc #check if the PC is online already, if not will say it's offline and ask again
 {
-    $PCname = read-Host -prompt "PC hostname to restart: " #asks for hostname
+    $PCname = read-Host -prompt "PC hostname to restart " #asks for hostname
     if (Test-Connection -ComputerName $PCname -Quiet -Count 1) #pings it
         {
         $Credential = Get-Credential $PCname\administrator #auth
 
-
+#functions
         function uptime #returns the uptime of the pc
                 {
                 (Get-Date) - [Management.ManagementDateTimeConverter]::ToDateTime((Get-WmiObject Win32_OperatingSystem -ComputerName $PCName -Credential $Credential -ErrorAction SilentlyContinue).LastBootUpTime)
@@ -64,7 +66,7 @@ function testpc #check if the PC is online already, if not will say it's offline
                 }
         }
 
-
+# start of script
         Get-WMIObject -ClassName Win32_ComputerSystem -ComputerName "$pcname" -Credential $Credential | Select-Object Username  # tells you whos logged in #  - \\itsyshorse\workshop\Signed\userlookup.ps1?
         uptime | format-list Days,Hours,Minutes #current up time
         $Ans = Read-Host -Prompt "do you want to restart $PCname y/n" #restart y/n
@@ -91,7 +93,6 @@ function testpc #check if the PC is online already, if not will say it's offline
             {
             chkuptime # re-runs the check to see if it's sorted
             }
-
 
         }
 else #if the pc was offline when typing in hostname
